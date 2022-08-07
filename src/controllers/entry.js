@@ -1,0 +1,1 @@
+const Entry = require("../models/entry");
