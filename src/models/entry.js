@@ -1,17 +1,39 @@
 const mongoose = require("mongoose");
 
 const entrySchema = mongoose.Schema({
-    googleId: {
-        type: String,
-        required: [true, 'Please add an id']
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'Please add a user']
     },
-    fullName: {
+    type: {
         type: String,
-        required: [true, 'Please add a name']
+        required: [true, 'Please add a type']
     },
-    email: {
-        type: String,
-        required: [true, 'Please add an email']
+    tags: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tag',
+    }],
+    otherPeople: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Person',
+    }],
+    startDate: {
+        type: Date,
+        required: [true, 'Please add the date']
+    },
+    endDate: {
+        type: Date
+    },
+    title: {
+        type: String 
+    },
+    details: {
+        type: String 
+    },
+    approxTime: {
+        // Military time as a whole number 0-2359
+        type: Number
     }
 }, {
     timestamps: true

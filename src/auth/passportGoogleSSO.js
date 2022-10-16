@@ -5,6 +5,8 @@ const User = require("../models/user");
 
 const GOOGLE_CALLBACK_URL = "http://localhost:5000/api/v1/auth/google/callback";
 
+
+// Performs both registration and login
 passport.use(
     new GoogleStrategy(
         {
@@ -16,6 +18,7 @@ passport.use(
         async (req, accessToken, refreshToken, profile, done) => {
             const currentUser = {
                 fullName: `${profile.name.givenName} ${profile.name.familyName}`,
+                firstName: profile.name.givenName,
                 email: profile.emails[0].value,
                 googleId: profile.id
             };
@@ -24,9 +27,10 @@ passport.use(
                 const existingUser = await User.findOne({ googleId: profile.id });
                 if (existingUser) {
                     console.log("Found existing user");
-                    return (done, existingUser);
+                    return done(null, existingUser);
                 }
                 console.log("Creating new user");
+                currentUser.permission = 0;
                 const newUser = new User(currentUser);
                 await newUser.save();
                 return done(null, newUser);
@@ -39,19 +43,26 @@ passport.use(
     )
 );
 
+// Puts the user id into the session token
 passport.serializeUser((user, done) => {
     console.log("Serializing user:", user);
     return done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
+// Pulls the id from the session token and tries to find the user in the DB
+passport.deserializeUser(async (id, done) => {
+    await User.findById(id, (err, user) => {
         if (err) {
             console.log("Error deserializing", err);
             done(err, null);
         } else {
             console.log("Deserialized user", user);
             if (user) done(null, user);
+            else {
+                console.log("User not found")
+                done(null, null);
+            }
         }
     });
+    
 })

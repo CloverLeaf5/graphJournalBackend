@@ -21,9 +21,16 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 //app.use(morgan("dev"));
-app.use(helmet());
-//app.use(cors());
-//app.use(express.json());
+app.use(
+    helmet({ crossOriginOpenerPolicy: { policy: "unsafe-none" } })
+  );
+
+
+app.use(cors({
+    origin: `${process.env.FRONTEND}`,
+    credentials: true
+}));
+app.use(express.json());
 app.use(
     cookieSession({
         maxAge: 24 * 60 * 60 * 1000,
@@ -44,10 +51,10 @@ app.use("/api/v1", api);
 
 
 
-// app.get("/", (req, res) => {
-//     res.json({
-//         message: "Test response success"
-//     });
-// });
+app.get("/", (req, res) => {
+    res.json({
+        message: "Test homepage success!"
+    });
+});
 
 module.exports = app;
