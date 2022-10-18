@@ -21,6 +21,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 //app.use(morgan("dev"));
+// Needs COOP policy to properly open and close popup on front end
 app.use(
     helmet({ crossOriginOpenerPolicy: { policy: "unsafe-none" } })
   );

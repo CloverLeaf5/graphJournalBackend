@@ -3,9 +3,8 @@ const passport = require("passport");
 
 const router = express.Router();
 
-// EVENTUALLY UPDATE THESE TO ROUTE TO FRONTEND
 const successLoginUrl = "http://localhost:3000/login/success";
-const errorLoginUrl = "http://localhost:5000/api/v1/login/error";
+const errorLoginUrl = "http://localhost:3000/login/error";
 
 // To start the authentication process with Google
 router.get(

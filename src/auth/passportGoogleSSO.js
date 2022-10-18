@@ -49,20 +49,20 @@ passport.serializeUser((user, done) => {
     return done(null, user.id);
 });
 
+
 // Pulls the id from the session token and tries to find the user in the DB
 passport.deserializeUser(async (id, done) => {
-    await User.findById(id, (err, user) => {
-        if (err) {
-            console.log("Error deserializing", err);
-            done(err, null);
-        } else {
-            console.log("Deserialized user", user);
-            if (user) done(null, user);
-            else {
-                console.log("User not found")
-                done(null, null);
-            }
+    try {
+        const user = await User.findById(id);
+        console.log("Deserialized user", user);
+        if (user) done(null, user);
+        else {
+            console.log("User not found")
+            done(null, null);
         }
-    });
+    } catch(err) {
+        console.log("Error deserializing", err);
+        done(err, null);
+    }
     
-})
+});
