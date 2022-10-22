@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const tagSchema = mongoose.Schema({
+const groupSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -14,10 +14,15 @@ const tagSchema = mongoose.Schema({
     },
     title: {
         type: String,
-        required: [true, 'Please add a tag']
-    }
+        required: [true, 'Please add a title']
+    },
+    people: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Person',
+        required: [true, 'Please add people']
+    }]
 }, {
     timestamps: true
 });
 
-module.exports = mongoose.model("Tag", tagSchema);
+module.exports = mongoose.model("Group", groupSchema);

@@ -45,7 +45,7 @@ passport.use(
 
 // Puts the user id into the session token
 passport.serializeUser((user, done) => {
-    console.log("Serializing user:", user);
+   // console.log("Serializing user:", user);
     return done(null, user.id);
 });
 
@@ -54,7 +54,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
     try {
         const user = await User.findById(id);
-        console.log("Deserialized user", user);
+     //   console.log("Deserialized user", user);
         if (user) done(null, user);
         else {
             console.log("User not found")

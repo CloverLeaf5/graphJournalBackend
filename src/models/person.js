@@ -6,8 +6,18 @@ const personSchema = mongoose.Schema({
         ref: 'User',
         required: [true, 'Please add a user']
     },
+    userEmail: {
+        type: String
+    },
+    userGoogleId: {
+        type: String
+    },
     title: {
-        type: String 
+        type: String,
+        required: [true, 'Please add a name']
+    },
+    details: {
+        type: String
     }
 }, {
     timestamps: true
