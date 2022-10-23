@@ -18,6 +18,10 @@ const personSchema = mongoose.Schema({
     },
     details: {
         type: String
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

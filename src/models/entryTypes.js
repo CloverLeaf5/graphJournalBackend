@@ -27,7 +27,8 @@ exports.entryTypesWithText = [
     {value: "lifeEvent", text: "Life Event"},
     {value: "picture", text: "Picture"},
     {value: "ticket", text: "Ticket"},
-    {value: "financialAccount", text: "Financial Account"}
+    {value: "financialAccount", text: "Financial Account"},
+    {value: "other", text: "Other"}
 ];
 
 exports.entryTypes = [
@@ -37,5 +38,5 @@ exports.entryTypes = [
     "job", "residence", "school", "eventWedding", "eventSports", 
     "eventConcert", "eventParty", "eventSomeoneElse", 
     "achievementOrAward", "majorPurchase", "lifeEvent", "picture", 
-    "ticket", "financialAccount"
+    "ticket", "financialAccount", "other"
 ];

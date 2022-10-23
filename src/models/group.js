@@ -20,7 +20,11 @@ const groupSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Person',
         required: [true, 'Please add people']
-    }]
+    }],
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true
 });

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const tagSchema = mongoose.Schema({
+const savedViewSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -14,7 +14,10 @@ const tagSchema = mongoose.Schema({
     },
     title: {
         type: String,
-        required: [true, 'Please add a tag']
+        required: [true, 'Please add a name']
+    },
+    details: {
+        type: String
     },
     isDeleted: {
         type: Boolean,
@@ -24,4 +27,4 @@ const tagSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model("Tag", tagSchema);
+module.exports = mongoose.model("SavedView", savedViewSchema);

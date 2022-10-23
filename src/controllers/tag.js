@@ -1,3 +1,4 @@
+const Entry = require("../models/entry");
 const Tag = require("../models/tag");
 
 exports.newTag = async (req, res) => {
@@ -17,11 +18,37 @@ exports.newTag = async (req, res) => {
 exports.getTags = async (req, res) => {
     const user = req.user._id;
     try{
-        const tags = await Tag.find({user: user})
+        const allTags = await Tag.find({user: user})
+        const tags = allTags.filter((tag) => {
+            return (!tag.isDeleted);
+        })
         res.send(tags);
     } catch(err) {
         console.log(err);
         res.json({message: `There was an error`});
     }
 
+};
+
+exports.deleteTag = async (req, res) => {
+    const currentTagID = req.body.tagId;
+    try{
+        await Tag.findByIdAndUpdate(currentTagID, {isDeleted: true});
+        res.json({message: `Successful tag deletion.`})
+    } catch (err) {
+        console.log(err);
+        res.json({message: `There was an error`});
+    }
+};
+
+exports.updateTag = async (req, res) => {
+    const currentTagID = req.body.tagId;
+    const newTitle = req.body.title;
+    try{
+        await Tag.findByIdAndUpdate(currentTagID, {title: newTitle});
+        res.json({message: `Successful tag update.`})
+    } catch (err) {
+        console.log(err);
+        res.json({message: `There was an error`});
+    }
 };

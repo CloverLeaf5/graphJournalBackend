@@ -40,11 +40,18 @@ const entrySchema = mongoose.Schema({
     title: {
         type: String 
     },
+    subtitle: {
+        type: String 
+    },
     details: {
         type: String 
     },
     location: {
         type: String 
+    },
+    rating: {
+        // Rating from 1-5
+        type: Number
     },
     approxTime: {
         // Military time as a whole number 0-2359
@@ -57,7 +64,15 @@ const entrySchema = mongoose.Schema({
     APIImage: {
         // URL
         type: String 
-    }
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    savedViews: [{  // These are views that this object was saved in
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SavedView',
+    }]
 }, {
     timestamps: true
 });

@@ -18,11 +18,37 @@ exports.newPerson = async (req, res) => {
 exports.getPeople = async (req, res) => {
     const user = req.user._id;
     try{
-        const people = await Person.find({user: user})
+        const allPeople = await Person.find({user: user})
+        const people = allPeople.filter((person) => {
+            return (!person.isDeleted);
+        })
         res.send(people);
     } catch(err) {
         console.log(err);
         res.json({message: `There was an error`});
     }
 
+};
+
+exports.deletePerson = async (req, res) => {
+    const currentPersonID = req.body.personId;
+    try{
+        await Person.findByIdAndUpdate(currentPersonID, {isDeleted: true});
+        res.json({message: `Successful person deletion.`})
+    } catch (err) {
+        console.log(err);
+        res.json({message: `There was an error`});
+    }
+};
+
+exports.updatePerson = async (req, res) => {
+    const currentPersonID = req.body.personId;
+    const newTitle = req.body.title;
+    try{
+        await Person.findByIdAndUpdate(currentPersonID, {title: newTitle});
+        res.json({message: `Successful person update.`})
+    } catch (err) {
+        console.log(err);
+        res.json({message: `There was an error`});
+    }
 };

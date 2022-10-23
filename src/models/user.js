@@ -23,6 +23,10 @@ const userSchema = mongoose.Schema({
         // 2 for Owner
         type: Number,
         required: [true, 'Please add a permission level']
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

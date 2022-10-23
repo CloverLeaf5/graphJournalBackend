@@ -1,6 +1,6 @@
 const Entry = require("../models/entry");
 const { entryTypes, entryTypesWithText } = require("../models/entryTypes");
-const { getMovies } = require("./apiHelperFunctions");
+const { getMovies, getShows } = require("./apiHelperFunctions");
 
 let APIData = [];
 let currentEntryID = "";
@@ -21,6 +21,11 @@ exports.newEntry = async (req, res) => {
                 console.log(err);
             });
         }
+        if (entryData.type === "show"){
+            APIData = await getShows(entryObject.title).catch((err) => {
+                console.log(err);
+            });
+        }
         console.log(APIData)
         res.send(APIData);
     } catch (err) {
@@ -29,6 +34,8 @@ exports.newEntry = async (req, res) => {
 };
 
 exports.updateAPIImage = async (req, res) => {
+    if (APIData.length === 0) return;
+    
     const index = req.body.arraySelection;
     const APIImageURL = APIData[index].image;
     try{
@@ -56,8 +63,12 @@ const removeEmptyProperties = (submission) => {
     if (submission.startDate.length === 0) delete submission.startDate
     if (submission.endDate.length === 0) delete submission.endDate
     if (submission.title.length === 0) delete submission.title
+    if (submission.subtitle.length === 0) delete submission.subtitle
     if (submission.details.length === 0) delete submission.details
     if (submission.location.length === 0) delete submission.location
+    if ((typeof submission.rating !== "number") ||
+        (submission.rating < 1) ||
+        (submission.rating > 5) ) delete submission.rating
     if ((typeof submission.approxTime !== "number") ||
         (submission.approxTime < 0) ||
         (submission.approxTime > 2359) ) delete submission.approxTime
