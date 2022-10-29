@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const savedViewSchema = mongoose.Schema({
+const viewSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -23,6 +23,9 @@ const savedViewSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Entry'
     }],
+    viewType: {
+        type: String
+    },
     isDeleted: {
         type: Boolean,
         default: false
@@ -31,4 +34,4 @@ const savedViewSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model("SavedView", savedViewSchema);
+module.exports = mongoose.model("View", viewSchema);

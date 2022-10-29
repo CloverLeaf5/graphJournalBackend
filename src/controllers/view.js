@@ -2,6 +2,7 @@ const Entry = require("../models/entry");
 const Tag = require("../models/tag");
 const Person = require("../models/person");
 const Group = require("../models/group");
+const View = require("../models/view");
 
 // FRONT END MUST STRIP THE TIME FROM THE DATES
 exports.findEntries = async (req, res) => {
@@ -34,8 +35,6 @@ exports.findEntries = async (req, res) => {
         if (endDateEnd.length > 0)
             criteria.endDate.$lte = endDateEnd;
     }
-
-    console.log(criteria)
 
     try{
         const allEntries = await Entry.find({user: user, ...criteria})
@@ -123,6 +122,23 @@ exports.findEntries = async (req, res) => {
         res.send(sortedEntries);
     } catch(err) {
         console.log(err);
+        res.json({message: `There was an error`});
+    }
+};
+
+
+exports.saveView = async (req, res) => {
+    const viewData = req.body;
+    const user = req.user._id;
+    const userEmail = req.user.email;
+    const userGoogleId = req.user.googleId;
+    console.log(viewData)
+    const view = new View({user, userEmail, userGoogleId, ...viewData});
+    console.log(view)
+    try{
+        const savedView = await view.save();
+        res.send(savedView);
+    } catch (err) {
         res.json({message: `There was an error`});
     }
 };
