@@ -26,7 +26,6 @@ passport.use(
             try{
                 const existingUser = await User.findOne({ googleId: profile.id });
                 if (existingUser) {
-                    console.log("Found existing user");
                     return done(null, existingUser);
                 }
                 console.log("Creating new user");
