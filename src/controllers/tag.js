@@ -44,8 +44,10 @@ exports.deleteTag = async (req, res) => {
 exports.updateTag = async (req, res) => {
     const currentTagID = req.body.tagId;
     const newTitle = req.body.title;
+    const newDetails = req.body.details;
+    const newPicture = req.body.picture;
     try{
-        await Tag.findByIdAndUpdate(currentTagID, {title: newTitle});
+        await Tag.findByIdAndUpdate(currentTagID, {title: newTitle, details: newDetails, picture: newPicture});
         res.json({message: `Successful tag update.`})
     } catch (err) {
         console.log(err);

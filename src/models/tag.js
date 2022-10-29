@@ -16,6 +16,13 @@ const tagSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please add a tag']
     },
+    details: {
+        type: String
+    },
+    picture: {
+        // Key at AWS s3://graph-journal
+        type: String 
+    },
     isDeleted: {
         type: Boolean,
         default: false

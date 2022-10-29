@@ -25,9 +25,11 @@ exports.getMovies = async (title) => {
         let returnArray = [];
         dataArray.forEach(movie => {
             returnArray.push({
+                //concatenate DB Path and Poster Path for the image
                 title: movie.title,
                 release: movie.release_date,
-                image: `${imagePath}${movie.poster_path}`
+                imageDBPath: `${imagePath}`,
+                imagePosterPath:`${movie.poster_path}`
             })
         });
         return returnArray;
@@ -57,9 +59,11 @@ exports.getShows = async (title) => {
         let returnArray = [];
         dataArray.forEach(movie => {
             returnArray.push({
+                //concatenate DB Path and Poster Path for the image
                 title: movie.name,
                 release: movie.first_air_date,
-                image: `${imagePath}${movie.poster_path}`
+                imageDBPath: `${imagePath}`,
+                imagePosterPath:`${movie.poster_path}`
             })
         });
         return returnArray;

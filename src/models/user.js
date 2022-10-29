@@ -17,11 +17,17 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please add an email']
     },
-    permission: {
+    role: {
         // 0 for User
         // 1 for Admin
         // 2 for Owner
         type: Number,
+        required: [true, 'Please add a permission level']
+    },
+    permission: {
+        // 0 is the only option for now
+        type: Number,
+        default: 0,
         required: [true, 'Please add a permission level']
     },
     isDeleted: {

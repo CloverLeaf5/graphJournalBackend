@@ -16,11 +16,18 @@ const groupSchema = mongoose.Schema({
         type: String,
         required: [true, 'Please add a title']
     },
+    details: {
+        type: String
+    },
     people: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Person',
         required: [true, 'Please add people']
     }],
+    picture: {
+        // Key at AWS s3://graph-journal
+        type: String 
+    },
     isDeleted: {
         type: Boolean,
         default: false

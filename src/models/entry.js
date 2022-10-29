@@ -18,6 +18,10 @@ const entrySchema = mongoose.Schema({
         enum: entryTypes,
         required: [true, 'Please add a type']
     },
+    typeText: {
+        type: String,
+        required: [true, 'Please add the type text']
+    },
     tags: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Tag',
@@ -32,13 +36,14 @@ const entrySchema = mongoose.Schema({
     }],
     startDate: {
         type: Date,
-     //   required: [true, 'Please add the date']
+        required: [true, 'Please add the date']
     },
     endDate: {
         type: Date
     },
     title: {
-        type: String 
+        type: String,
+        required: [true, 'Please add the title']
     },
     subtitle: {
         type: String 
@@ -49,30 +54,73 @@ const entrySchema = mongoose.Schema({
     location: {
         type: String 
     },
+    APILocationLat: {
+        type: Number
+    },
+    APILocationLng: {
+        type: Number
+    },
+    APILocationString: {
+        type: String
+    },
+    useAPILocation: {
+        type: Boolean,
+        default: false
+    },
     rating: {
         // Rating from 1-5
         type: Number
+    },
+    isStarred: {
+        // If is important
+        type: Boolean,
+        default: false
+    },
+    isAchievement: {
+        // If represents a milestone within the type
+        type: Boolean,
+        default: false
     },
     approxTime: {
         // Military time as a whole number 0-2359
         type: Number
     },
-    picture: {
-        // Key at AWS s3://graph-journal
+    // Store custom metrics to be tracked across goal progress or other type
+    // Think miles run in marathon training
+    metrics: [{
+        name: {
+            type: String
+        },
+        data: {
+            type: Number
+        }
+    }],
+    pictures: [{
+        location: {
+            // Key at AWS s3://graph-journal
+            type: String 
+        },
+        caption: {
+            type: String 
+        }
+    }],
+    APIImageDBPath: {
+        // URL which is prepended before Image Path
         type: String 
     },
-    APIImage: {
-        // URL
+    APIImagePath: {
+        // URL which is appended after DB Path
         type: String 
+    },
+    whichImage: {
+        // 0 for none, 1 for S3, 2 for APIImage
+        type: Number,
+        default: 0
     },
     isDeleted: {
         type: Boolean,
         default: false
-    },
-    savedViews: [{  // These are views that this object was saved in
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'SavedView',
-    }]
+    }
 }, {
     timestamps: true
 });

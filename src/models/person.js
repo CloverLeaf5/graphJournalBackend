@@ -19,6 +19,15 @@ const personSchema = mongoose.Schema({
     details: {
         type: String
     },
+    picture: {
+        // Key at AWS s3://graph-journal
+        type: String 
+    },
+    isOtherUser: {
+        // for Possible future when a friend is linked to another user account
+        type: Boolean,
+        default: false
+    },
     isDeleted: {
         type: Boolean,
         default: false

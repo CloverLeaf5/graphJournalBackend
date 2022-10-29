@@ -19,6 +19,10 @@ const savedViewSchema = mongoose.Schema({
     details: {
         type: String
     },
+    entries: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Entry'
+    }],
     isDeleted: {
         type: Boolean,
         default: false

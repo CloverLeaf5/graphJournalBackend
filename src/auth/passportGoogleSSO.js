@@ -30,7 +30,7 @@ passport.use(
                     return done(null, existingUser);
                 }
                 console.log("Creating new user");
-                currentUser.permission = 0;
+                currentUser.role = 0;
                 const newUser = new User(currentUser);
                 await newUser.save();
                 return done(null, newUser);

@@ -44,8 +44,10 @@ exports.deletePerson = async (req, res) => {
 exports.updatePerson = async (req, res) => {
     const currentPersonID = req.body.personId;
     const newTitle = req.body.title;
+    const newDetails = req.body.details;
+    const newPicture = req.body.picture;
     try{
-        await Person.findByIdAndUpdate(currentPersonID, {title: newTitle});
+        await Person.findByIdAndUpdate(currentPersonID, {title: newTitle, details: newDetails, picture: newPicture});
         res.json({message: `Successful person update.`})
     } catch (err) {
         console.log(err);

@@ -22,7 +22,7 @@ exports.getGroups = async (req, res) => {
         const groups = allGroups.filter((group) => {
             return (!group.isDeleted);
         })
-        // Need to get the people in each group
+        // Need to get the people in each group to see if they are deleted
         for (const group of groups) {
             const fullPeopleArray = [];
             for (const person of group.people) {
@@ -59,8 +59,11 @@ exports.updateGroup = async (req, res) => {
     const currentGroupID = req.body.groupId;
     const newTitle = req.body.title;
     const newPeople = req.body.groupPeople;
+    const newDetails = req.body.details;
+    const newPicture = req.body.picture;
     try{
-        await Group.findByIdAndUpdate(currentGroupID, {title: newTitle, people: newPeople});
+        await Group.findByIdAndUpdate(currentGroupID, {title: newTitle, people: newPeople,
+                                                        details: newDetails, picture: newPicture});
         res.json({message: `Successful group update.`})
     } catch (err) {
         console.log(err);
