@@ -23,6 +23,8 @@ exports.newEntry = async (req, res) => {
     // Decide whether to use a picture and the Google API location
     if (cleanedEntryObject.pictures.length>0) cleanedEntryObject.whichImage = 1;
     else cleanedEntryObject.whichImage = 0;
+    cleanedEntryObject.APIImageDBPath = "";
+    cleanedEntryObject.APIImagePath = "";
     const entry = new Entry(cleanedEntryObject);
     currentEntryID = entry._id;
     try{
