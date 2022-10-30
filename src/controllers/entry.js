@@ -4,6 +4,7 @@ const Group = require("../models/group");
 const Person = require("../models/person");
 const { entryTypes, entryTypesWithText } = require("../models/entryTypes");
 const { getMovies, getShows } = require("./apiHelperFunctions");
+const S3 = require('aws-sdk/clients/s3');
 
 let APIData;
 let currentEntryID = "";
@@ -20,7 +21,8 @@ exports.newEntry = async (req, res) => {
     if (entryObject.approxTime) entryObject.approxTime = Number(entryObject.approxTime)
     const cleanedEntryObject = removeEmptyProperties(entryObject)
     // Decide whether to use a picture and the Google API location
-    if (cleanedEntryObject.pictures) cleanedEntryObject.whichImage = 1;
+    if (cleanedEntryObject.pictures.length>0) cleanedEntryObject.whichImage = 1;
+    else cleanedEntryObject.whichImage = 0;
     const entry = new Entry(cleanedEntryObject);
     currentEntryID = entry._id;
     try{
@@ -129,7 +131,8 @@ exports.updateEntry = async (req, res) => {
     if (entryObject.rating) entryObject.rating = Number(entryObject.rating)
     if (entryObject.approxTime) entryObject.approxTime = Number(entryObject.approxTime)
     const cleanedEntryObject = removeEmptyProperties(entryObject)
-    if (cleanedEntryObject.pictures) cleanedEntryObject.whichImage = 1;
+    if (cleanedEntryObject.pictures.length>0) cleanedEntryObject.whichImage = 1;
+    else cleanedEntryObject.whichImage = 0;
     currentEntryID = currentEntry;
     try{
         await Entry.findByIdAndUpdate(currentEntry, cleanedEntryObject);
@@ -173,6 +176,22 @@ exports.getEntryTypesWithText = (req, res) => {
     res.send(entryTypesWithText);
 };
 
+exports.getAWSPhotoURL = (req, res) => {
+    const s3 = new S3({
+        apiVersion: '2006-03-01',
+        region: 'us-east-1'
+      });
+    const params = {Bucket: `${process.env.S3_BUCKET}`, Key: `${req.body.s3Key}`};
+    s3.getSignedUrlPromise('getObject', params, function(err, url) {
+        if (err) {
+          console.log("Error", err);
+          res.json({message: `There was an error`});
+        } else {
+          res.send(url)
+        }
+      });
+};
+
 
 const removeEmptyProperties = (submission) => {
     // if (submission.tags.length === 0) delete submission.tags
@@ -195,9 +214,9 @@ const removeEmptyProperties = (submission) => {
     // if ((typeof submission.approxTime !== "number") ||
     //     (submission.approxTime < 0) ||
     //     (submission.approxTime > 2359) ) delete submission.approxTime
-    // cleanUpPictures(submission.pictures) // Remove any entries with an empty field
+    cleanUpPictures(submission.pictures) // Remove any entries with an empty field
     // if (submission.pictures.length === 0) delete submission.pictures
-    // cleanUpMetrics(submission.metrics) // Remove any entries with an empty field
+    cleanUpMetrics(submission.metrics) // Remove any entries with an empty field
     // if (submission.metrics.length === 0) delete submission.metrics
 
     return submission;

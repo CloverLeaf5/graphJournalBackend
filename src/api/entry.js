@@ -2,7 +2,7 @@ const express = require("express");
 const authMiddleware = require("../middlewares/auth");
 const {newEntry, getEntryTypes,
     getEntryTypesWithText, updateAPIImage,
-    getEntries, updateEntry, deleteEntry} = require("../controllers/entry");
+    getEntries, updateEntry, deleteEntry, getAWSPhotoURL} = require("../controllers/entry");
 
 const router = express.Router();
 
@@ -13,5 +13,7 @@ router.post("/entry/updateAPIImage", authMiddleware, updateAPIImage);
 router.get("/entry/getEntries", authMiddleware, getEntries);
 router.get("/entry/getEntryTypes", authMiddleware, getEntryTypes);
 router.get("/entry/getEntryTypesWithText", authMiddleware, getEntryTypesWithText);
+router.post("/entry/getAWSPhotoURL", authMiddleware, getAWSPhotoURL);
+
 
 module.exports = router;

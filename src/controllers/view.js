@@ -142,3 +142,32 @@ exports.saveView = async (req, res) => {
         res.json({message: `There was an error`});
     }
 };
+
+exports.getSavedViews = async (req, res) => {
+    const user = req.user._id;
+    try{
+        const allViews = await View.find({user: user})
+        const views = allViews.filter((view) => {
+            return (!view.isDeleted);
+        })
+        // Need to get the entries in each view to see if they are deleted
+        for (const view of views) {
+            const fullEntriesArray = [];
+            for (const entry of view.entries) {
+                try {
+                    fullEntry = await Entry.findById(entry)
+                    if (!fullEntry.isDeleted)
+                        fullEntriesArray.push(fullEntry);
+                } catch(err) {
+                    console.log(err);
+                }
+            }
+            view.entries = fullEntriesArray;
+        }
+        res.send(views);
+    } catch(err) {
+        console.log(err);
+        res.json({message: `There was an error`});
+    }
+
+};
