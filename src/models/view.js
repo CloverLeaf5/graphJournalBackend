@@ -26,6 +26,21 @@ const viewSchema = mongoose.Schema({
     viewType: {
         type: String
     },
+    useGoogleMap: {
+        type: Boolean
+    },
+    googleMapCenterLat: {
+        type: Number
+    },
+    googleMapCenterLng: {
+        type: Number
+    },
+    googleMapZoom: {
+        type: Number
+    },
+    googleMapTypeId: {
+        type: String
+    },
     isDeleted: {
         type: Boolean,
         default: false

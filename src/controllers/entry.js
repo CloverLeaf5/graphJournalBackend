@@ -3,15 +3,18 @@ const Tag = require("../models/tag");
 const Group = require("../models/group");
 const Person = require("../models/person");
 const { entryTypes, entryTypesWithText } = require("../models/entryTypes");
-const { getMovies, getShows } = require("./apiHelperFunctions");
+const { getMovies, getShows, getBooks } = require("./apiHelperFunctions");
 const S3 = require('aws-sdk/clients/s3');
 
+// This will need to be updated to a library if multiple users are using at once
 let APIData;
 let currentEntryID = "";
 
+// Input a brand new entry
 exports.newEntry = async (req, res) => {
-    APIData = [];
+    APIData = []; // For the later returned API data
     const entryData = req.body;
+    // User info
     const user = req.user._id;
     const userEmail = req.user.email;
     const userGoogleId = req.user.googleId;
@@ -23,6 +26,7 @@ exports.newEntry = async (req, res) => {
     // Decide whether to use a picture and the Google API location
     if (cleanedEntryObject.pictures.length>0) cleanedEntryObject.whichImage = 1;
     else cleanedEntryObject.whichImage = 0;
+    // Assure that all fields are present
     cleanedEntryObject.APIImageDBPath = "";
     cleanedEntryObject.APIImagePath = "";
     const entry = new Entry(cleanedEntryObject);
@@ -37,6 +41,11 @@ exports.newEntry = async (req, res) => {
         }
         if (entryData.type === "show"){
             APIData = await getShows(entryObject.title).catch((err) => {
+                console.log(err);
+            });
+        }
+        if (cleanedEntryObject.type === "book"){
+            APIData = await getBooks(entryObject.title).catch((err) => {
                 console.log(err);
             });
         }
@@ -149,6 +158,11 @@ exports.updateEntry = async (req, res) => {
                 console.log(err);
             });
         }
+        if (cleanedEntryObject.type === "book"){
+            APIData = await getBooks(entryObject.title).catch((err) => {
+                console.log(err);
+            });
+        }
         res.send(APIData);
     } catch (err) {
         console.log(err);
@@ -225,7 +239,6 @@ const removeEmptyProperties = (submission) => {
 }
 
 const cleanUpPictures = (pictures) => {
-    console.log(pictures)
     let numSpliced = 0;
     for (let i=0; i<pictures.length+numSpliced; i++){
         if (!(pictures[i-numSpliced].location)){
@@ -236,7 +249,6 @@ const cleanUpPictures = (pictures) => {
 }
 
 const cleanUpMetrics = (metrics) => {
-    console.log(metrics)
     let numSpliced = 0;
     for (let i=0; i<metrics.length+numSpliced; i++){
         if (!(metrics[i-numSpliced].name) || !(metrics[i-numSpliced].data)){
@@ -245,17 +257,3 @@ const cleanUpMetrics = (metrics) => {
         }
     }
 }
-
-
-
-
-
-// GET IMAGES FROM S3 TO REACT
-
-// var params = {Bucket: 'xxx-xx-xxx', Key: '1.jpg'};
-// var promise = s3.getSignedUrlPromise('getObject', params);
-// promise.then(function(url) {
-//   res.send(url)
-// }, function(err) { console.log(err) });
-
-// https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#getSignedUrl-property

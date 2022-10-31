@@ -132,9 +132,7 @@ exports.saveView = async (req, res) => {
     const user = req.user._id;
     const userEmail = req.user.email;
     const userGoogleId = req.user.googleId;
-    console.log(viewData)
     const view = new View({user, userEmail, userGoogleId, ...viewData});
-    console.log(view)
     try{
         const savedView = await view.save();
         res.send(savedView);

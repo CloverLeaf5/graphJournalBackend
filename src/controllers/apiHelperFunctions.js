@@ -70,4 +70,39 @@ exports.getShows = async (title) => {
     }
 }
 
+// Defaults to 10 results
+exports.getBooks = async (title) => {
+    const endpoint = "https://www.googleapis.com/books/v1/volumes";
+    const imagePath = "";
+    const params = new URLSearchParams();
+    params.append('key', process.env.GOOGLE_BOOKS_API_KEY);
+    params.append('q', title);
+
+    const response = await axios
+    .get(endpoint, {params})
+    .catch((err) => {
+        console.log(err);
+        return;
+    });
+
+    if (response && response.data){
+        let dataArray =  response.data.items;
+        // Keep only up to the first NUM_ELEMENTS results
+        dataArray = dataArray.slice(0,NUM_ELEMENTS);
+        let returnArray = [];
+        dataArray.forEach(book => {
+            returnArray.push({
+                //concatenate DB Path and Poster Path for the image
+                title: book.volumeInfo.title,
+                author: book.volumeInfo.authors[0],
+                imageDBPath: `${imagePath}`,
+                imagePosterPath:`${book.volumeInfo.imageLinks.thumbnail}`
+            })
+        });
+        console.log(returnArray)
+        return returnArray;
+    }
+}
+
 // Movies/Shows = TMDB https://www.themoviedb.org/settings/api
+// Books = Google https://developers.google.com/books/docs/v1/using
