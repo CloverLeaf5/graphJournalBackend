@@ -19,22 +19,18 @@ exports.getGroups = async (req, res) => {
     const user = req.user._id;
     try{
         const allGroups = await Group.find({user: user})
+        .populate('people');
         const groups = allGroups.filter((group) => {
             return (!group.isDeleted);
         })
-        // Need to get the people in each group to see if they are deleted
+        // Need to filter any people in each group who are deleted
         for (const group of groups) {
-            const fullPeopleArray = [];
+            const correctPeople = [];
             for (const person of group.people) {
-                try {
-                    fullPerson = await Person.findById(person)
-                    if (!fullPerson.isDeleted)
-                        fullPeopleArray.push(fullPerson);
-                } catch(err) {
-                    console.log(err);
-                }
+                if (!person.isDeleted)
+                correctPeople.push(person);
             }
-            group.people = fullPeopleArray;
+            group.people = correctPeople;
         }
         res.send(groups);
     } catch(err) {
