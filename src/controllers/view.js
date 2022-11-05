@@ -79,10 +79,11 @@ exports.findEntries = async (req, res) => {
         
         // Sort entries from most recent to oldest
         const sortedEntries = entriesMinusDeletedTPG.sort((entryA, entryB) =>
-            Number(entryB.startDate) - Number(entryA.startDate)
+            (Number(entryB.startDate) - Number(entryA.startDate)) || (Number(entryB.approxTime) - Number(entryA.approxTime))
         )
 
         // Need to get the tags/people/groups in each entry to see if they are deleted
+        // This can be done more quickly by populating above
         for (const entry of sortedEntries) {
             // TAGS
             const fullTagArray = [];
@@ -128,7 +129,7 @@ exports.findEntries = async (req, res) => {
     }
 };
 
-
+// Save the new view to the database
 exports.saveView = async (req, res) => {
     const viewData = req.body;
     const user = req.user._id;
@@ -143,6 +144,7 @@ exports.saveView = async (req, res) => {
     }
 };
 
+// Update a view with data from the front end
 exports.updateView = async (req, res) => {
     const currentViewId = req.body.viewId;
     const viewObject = {...req.body};
@@ -156,6 +158,7 @@ exports.updateView = async (req, res) => {
     }
 };
 
+// Mark a view as deleted
 exports.deleteView = async (req, res) => {
     const currentViewId = req.body.viewId;
     try{

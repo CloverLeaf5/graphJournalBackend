@@ -83,7 +83,8 @@ const entrySchema = mongoose.Schema({
     },
     approxTime: {
         // Military time as a whole number 0-2359
-        type: Number
+        type: Number,
+        default: 0
     },
     // Store custom metrics to be tracked across goal progress or other type
     // Think miles run in marathon training
