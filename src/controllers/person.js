@@ -6,7 +6,6 @@ exports.newPerson = async (req, res) => {
     const userEmail = req.user.email;
     const userGoogleId = req.user.googleId;
     const person = new Person({user, userEmail, userGoogleId, ...personData});
-    console.log(person);
     try{
         await person.save();
         res.json({message: `Created new person`});
