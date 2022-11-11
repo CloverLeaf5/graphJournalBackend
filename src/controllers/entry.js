@@ -1,7 +1,4 @@
 const Entry = require("../models/entry");
-const Tag = require("../models/tag");
-const Group = require("../models/group");
-const Person = require("../models/person");
 const { entryTypes, entryTypesWithText } = require("../models/entryTypes");
 const { getMovies, getShows, getBooks } = require("./apiHelperFunctions");
 const S3 = require('aws-sdk/clients/s3');
@@ -78,6 +75,9 @@ exports.getEntries = async (req, res) => {
     const user = req.user._id;
     try{
         const allEntries = await Entry.find({user: user})
+                                    .populate('tags')
+                                    .populate('people')
+                                    .populate('groups');
         const entries = allEntries.filter((entry) => {
             return (!entry.isDeleted);
         })
@@ -91,37 +91,22 @@ exports.getEntries = async (req, res) => {
             // TAGS
             const fullTagArray = [];
             for (const tag of entry.tags) {
-                try {
-                    fullTag = await Tag.findById(tag)
-                    if (!fullTag.isDeleted)
-                        fullTagArray.push(fullTag);
-                } catch(err) {
-                    console.log(err);
-                }
+                if (!tag.isDeleted)
+                    fullTagArray.push(tag);
             }
             entry.tags = fullTagArray;
             // PEOPLE
             const fullPeopleArray = [];
             for (const person of entry.people) {
-                try {
-                    fullPerson = await Person.findById(person)
-                    if (!fullPerson.isDeleted)
-                        fullPeopleArray.push(fullPerson);
-                } catch(err) {
-                    console.log(err);
-                }
+                if (!person.isDeleted)
+                    fullPeopleArray.push(person);
             }
             entry.people = fullPeopleArray;
             // GROUPS
             const fullGroupArray = [];
             for (const group of entry.groups) {
-                try {
-                    fullGroup = await Group.findById(group)
-                    if (!fullGroup.isDeleted)
-                    fullGroupArray.push(fullGroup);
-                } catch(err) {
-                    console.log(err);
-                }
+                if (!group.isDeleted)
+                    fullGroupArray.push(group);
             }
             entry.groups = fullGroupArray;
         }

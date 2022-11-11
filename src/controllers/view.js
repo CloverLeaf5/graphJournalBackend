@@ -1,7 +1,4 @@
 const Entry = require("../models/entry");
-const Tag = require("../models/tag");
-const Person = require("../models/person");
-const Group = require("../models/group");
 const View = require("../models/view");
 
 // Used to find the entries relevant to a view creation search
@@ -40,38 +37,49 @@ exports.findEntries = async (req, res) => {
     // Get all entries that meet the criteria
     try{
         const allEntries = await Entry.find({user: user, ...criteria})
+                                        .populate('tags')
+                                        .populate('people')
+                                        .populate('groups');
         const entriesMinusDeleted = allEntries.filter((entry) => {
             return (!entry.isDeleted);
         })
 
         // Assure entries have requested tags
+        // EntryTagIDs are the current entry's tags
+        // tagIDs are the required ones per user criteria (AS STRINGS!!)
         const entriesMinusDeletedT = [];
         for (const entry of entriesMinusDeleted){
+            let entryTagIDs = entry.tags.map((tag) => tag._id.toString())
             let hasAllTags = true;
-            for (const tag of tagIDs)
-                if (!entry.tags.includes(tag))
+            for (const tag of tagIDs){
+                if (!entryTagIDs.includes(tag))
                     hasAllTags = false;
+            }
             if (hasAllTags)
                 entriesMinusDeletedT.push(entry);
         }
 
         // Assure entries have requested people
+        // See tags above for more details on this
         const entriesMinusDeletedTP = [];
         for (const entry of entriesMinusDeletedT){
+            let entryPeopleIDs = entry.people.map((person) => person._id.toString())
             let hasAllPeople = true;
             for (const person of personIDs)
-                if (!entry.people.includes(person))
+                if (!entryPeopleIDs.includes(person))
                     hasAllPeople = false;
             if (hasAllPeople)
                 entriesMinusDeletedTP.push(entry);
         }
 
         // Assure entries have requested groups
+        // See tags above for more details on this
         const entriesMinusDeletedTPG = [];
         for (const entry of entriesMinusDeletedTP){
+            let entryGroupIDs = entry.groups.map((group) => group._id.toString())
             let hasAllGroups = true;
             for (const group of groupIDs)
-                if (!entry.groups.includes(group))
+                if (!entryGroupIDs.includes(group))
                     hasAllGroups = false;
             if (hasAllGroups)
                 entriesMinusDeletedTPG.push(entry);
@@ -88,37 +96,22 @@ exports.findEntries = async (req, res) => {
             // TAGS
             const fullTagArray = [];
             for (const tag of entry.tags) {
-                try {
-                    fullTag = await Tag.findById(tag)
-                    if (!fullTag.isDeleted)
-                        fullTagArray.push(fullTag);
-                } catch(err) {
-                    console.log(err);
-                }
+                if (!tag.isDeleted)
+                    fullTagArray.push(tag);
             }
             entry.tags = fullTagArray;
             // PEOPLE
             const fullPeopleArray = [];
             for (const person of entry.people) {
-                try {
-                    fullPerson = await Person.findById(person)
-                    if (!fullPerson.isDeleted)
-                        fullPeopleArray.push(fullPerson);
-                } catch(err) {
-                    console.log(err);
-                }
+                if (!person.isDeleted)
+                    fullPeopleArray.push(person);
             }
             entry.people = fullPeopleArray;
             // GROUPS
             const fullGroupArray = [];
             for (const group of entry.groups) {
-                try {
-                    fullGroup = await Group.findById(group)
-                    if (!fullGroup.isDeleted)
-                    fullGroupArray.push(fullGroup);
-                } catch(err) {
-                    console.log(err);
-                }
+                if (!group.isDeleted)
+                    fullGroupArray.push(group);
             }
             entry.groups = fullGroupArray;
         }
@@ -200,45 +193,41 @@ exports.getSavedViews = async (req, res) => {
 // Receives an array of entries from a view that has only IDs for tags, people, and groups
 // Returns an array of all of the entries in the view along with their tags, people, and groups populated
 // To be used after selecting a view from the list of all views on the front end
+// First does another database call on the entries so they can be populated with fewer DB calls
 exports.populateViewEntries = async (req, res) => {
     let entryArray = req.body.entryArray;
-    for (const entry of entryArray) {
-        // TAGS
-        const fullTagArray = [];
-        for (const tag of entry.tags) {
-            try {
-                fullTag = await Tag.findById(tag)
-                if (!fullTag.isDeleted)
-                    fullTagArray.push(fullTag);
-            } catch(err) {
-                console.log(err);
+    let entryIDs = entryArray.map((entry) => entry._id);
+    try {
+        const populatedEntries = await Entry.find({
+            '_id': { $in: entryIDs}
+        })
+        .populate('tags')
+        .populate('people')
+        .populate('groups');
+        for (const entry of populatedEntries) {
+            // TAGS
+            const fullTagArray = [];
+            for (const tag of entry.tags) {
+                if (!tag.isDeleted)
+                    fullTagArray.push(tag);
             }
-        }
-        entry.tags = fullTagArray;
-        // PEOPLE
-        const fullPeopleArray = [];
-        for (const person of entry.people) {
-            try {
-                fullPerson = await Person.findById(person)
-                if (!fullPerson.isDeleted)
-                    fullPeopleArray.push(fullPerson);
-            } catch(err) {
-                console.log(err);
+            entry.tags = fullTagArray;
+            // PEOPLE
+            const fullPeopleArray = [];
+            for (const person of entry.people) {
+                if (!person.isDeleted)
+                    fullPeopleArray.push(person);
             }
-        }
-        entry.people = fullPeopleArray;
-        // GROUPS
-        const fullGroupArray = [];
-        for (const group of entry.groups) {
-            try {
-                fullGroup = await Group.findById(group)
-                if (!fullGroup.isDeleted)
-                fullGroupArray.push(fullGroup);
-            } catch(err) {
-                console.log(err);
+            entry.people = fullPeopleArray;
+            // GROUPS
+            const fullGroupArray = [];
+            for (const group of entry.groups) {
+                if (!group.isDeleted)
+                    fullGroupArray.push(group);
             }
+            entry.groups = fullGroupArray;
         }
-        entry.groups = fullGroupArray;
-    }
+    } catch(err) {console.log(err)};
+
     res.send(entryArray);
 };
