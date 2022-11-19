@@ -33,6 +33,7 @@ exports.entryTypesWithText = [
     {value: "relationship", text: "Relationship"},
     {value: "friendship", text: "Friendship"},
     {value: "childhoodMilestones", text: "Childhood Milestones"},
+    {value: "birthday", text: "Birthday"},
     {value: "pet", text: "Pet"},
     {value: "job", text: "Job"},
     {value: "residence", text: "Residence"},
@@ -59,5 +60,5 @@ exports.entryTypes = [
     "nightOut", "dayTrip", "hike", "other", "hotel", "project",
     "videoGame", "boardGame", "otherGame", "podcast", "youtube",
     "resource", "website", "gymMembership", "otherMembership",
-    "onATeam", "otherExercise", "run", "hobby", "habit"
+    "onATeam", "otherExercise", "run", "hobby", "habit", "birthday"
 ];
