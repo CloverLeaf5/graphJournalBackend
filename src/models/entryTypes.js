@@ -34,9 +34,11 @@ exports.entryTypesWithText = [
     {value: "friendship", text: "Friendship"},
     {value: "childhoodMilestones", text: "Childhood Milestones"},
     {value: "birthday", text: "Birthday"},
+    {value: "holiday", text: "Holiday"},
     {value: "pet", text: "Pet"},
     {value: "job", text: "Job"},
     {value: "residence", text: "Residence"},
+    {value: "car", text: "Car"},
     {value: "school", text: "School"},
     {value: "eventWedding", text: "Wedding"},
     {value: "eventSports", text: "Sporting Event"},
@@ -54,11 +56,12 @@ exports.entryTypes = [
     "journalEntry", "thought", "otherNote", "movie", "show", 
     "song", "album", "band", "book", "restaurant", "trip", 
     "relationship", "friendship", "childhoodMilestones", "pet", 
-    "job", "residence", "school", "eventWedding", "eventSports", 
+    "job", "residence", "car", "school", "eventWedding", "eventSports", 
     "eventConcert", "eventParty", "eventOther", "roadTripStop",
     "achievementOrAward", "majorPurchase", "lifeEvent", "picture", 
     "nightOut", "dayTrip", "hike", "other", "hotel", "project",
     "videoGame", "boardGame", "otherGame", "podcast", "youtube",
     "resource", "website", "gymMembership", "otherMembership",
-    "onATeam", "otherExercise", "run", "hobby", "habit", "birthday"
+    "onATeam", "otherExercise", "run", "hobby", "habit", "birthday",
+    "holiday"
 ];

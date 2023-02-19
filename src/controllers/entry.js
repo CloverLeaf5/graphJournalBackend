@@ -1,10 +1,13 @@
 const Entry = require("../models/entry");
 const { entryTypes, entryTypesWithText } = require("../models/entryTypes");
 const { getMovies, getShows, getBooks } = require("./apiHelperFunctions");
+const Counter = require("../models/counter");
+const User = require("../models/user")
 const S3 = require('aws-sdk/clients/s3');
+const axios = require("axios");
 
 // This will need to be updated to a library if multiple users are using at once
-let APIData;
+let APIData = [];
 let currentEntryID = "";
 
 // Input a brand new entry
@@ -52,16 +55,86 @@ exports.newEntry = async (req, res) => {
     }
 };
 
+// Called from the front end when the user selects which image to use from the above API searches
 exports.updateAPIImage = async (req, res) => {
     if (APIData.length === 0) return;
     
     const index = req.body.arraySelection;
     const APIImageDBURL = APIData[index].imageDBPath;
     const APIImagePathURL = APIData[index].imagePosterPath;
+    const keyRaw = APIData[index].title;
+    const keyClean = keyRaw.replace(/[^A-Za-z0-9]/g, ""); // Use regex to remove non-alphanumeric characters
+    let APIImageCounter;
+    // Get the current API Image Counter from the DB
+    try{
+        APIImageCounter = await Counter.findOne({ title: 'APIImageCounter', user: req.user._id });
+        if (!APIImageCounter) { // This is the first time and must create the entry
+            try{
+                const currentUser = User.findById(req.user._id);
+                if (!currentUser){
+                    console.log("Unable to find the current user");
+                    res.json({message: `There was an error creating the API Image Counter- Unable to find the current user`});
+                }
+                APIImageCounter = new Counter({ user: req.user._id,
+                                            userEmail: currentUser.userEmail,
+                                            userGoogleId: currentUser.userGoogleId,
+                                            title: 'APIImageCounter',
+                                            count: 0 });
+                APIImageCounter.save();
+            }catch (err) {
+                console.log(err);
+                res.json({message: `There was an error creating the API Image Counter`});
+            }
+        }
+    } catch (err) {
+        console.log(err);
+        res.json({message: `There was an error getting the API Image Counter`});
+    }
+    const currentCount = APIImageCounter.count;
+    const keyTitle = new String(keyClean).concat("_" + currentCount + ".jpg");
+    const fullKey = "Patrick/Media-API-Images/" + keyTitle;
+
+    // Get the image and put it in S3
+    const s3 = new S3({
+        apiVersion: '2006-03-01',
+        region: 'us-east-1'
+      });
+
+    try {
+        const response = await axios.get(APIImageDBURL + APIImagePathURL, {responseType: 'arraybuffer'});  // Corrupts the JPG without this responseType
+        if (response && response.data){
+            //imageFromAPI = response.data;
+            s3.putObject({Bucket: `${process.env.S3_BUCKET}`, Key: fullKey, Body: response.data}).promise().then(
+                function(data) {
+                  // Don't need to do anything
+              }).catch(
+                function(err) {
+                    console.log(err);
+                    res.json({message: `There was an error writing to S3`});
+              });
+        } else {
+            console.log(err);
+            res.json({message: `Did not get a reponse image from the API`});
+        }
+    } catch(err) {
+        console.log("Something went wrong with getting the Image from the API");
+    }
+
+    // Update the DB API Image counter and save it back to the DB
+    try {
+        APIImageCounter.count += 1;
+        await Counter.findOneAndUpdate({ title: 'APIImageCounter', user: req.user._id }, new Counter(APIImageCounter));
+    } catch (err) {
+        console.log(err);
+        res.json({message: `There was an error saving the count after writing to S3`});
+    }
+    
+    // Store in the DB that this entry is using an API image
     const whichImage = 2;
     try{
         await Entry.findByIdAndUpdate(currentEntryID, {APIImageDBPath: APIImageDBURL,
                                                         APIImagePath: APIImagePathURL,
+                                                        APIImageS3Key: fullKey,
                                                         whichImage: whichImage});
         APIData = [];
         currentEntryID = "";

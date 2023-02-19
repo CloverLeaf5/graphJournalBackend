@@ -1,6 +1,6 @@
 const axios = require("axios")
 
-const NUM_ELEMENTS = 5;
+const NUM_ELEMENTS = 10;
 
 exports.getMovies = async (title) => {
     const endpoint = "https://api.themoviedb.org/3/search/movie";
@@ -91,13 +91,24 @@ exports.getBooks = async (title) => {
         dataArray = dataArray.slice(0,NUM_ELEMENTS);
         let returnArray = [];
         dataArray.forEach(book => {
-            returnArray.push({
-                //concatenate DB Path and Poster Path for the image
-                title: book.volumeInfo.title,
-                author: book.volumeInfo.authors[0],
-                imageDBPath: `${imagePath}`,
-                imagePosterPath:`${book.volumeInfo.imageLinks.thumbnail}`
-            })
+            if (book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail){  // Would fail if there are no imageLinks
+                returnArray.push({
+                    //concatenate DB Path and Poster Path for the image
+                    title: book.volumeInfo.title,
+                    author: book.volumeInfo.authors[0],
+                    imageDBPath: `${imagePath}`,
+                    imagePosterPath:`${book.volumeInfo.imageLinks.thumbnail}`
+                })
+            } else { // No image links, send empty string
+                returnArray.push({
+                    //concatenate DB Path and Poster Path for the image
+                    title: book.volumeInfo.title,
+                    author: book.volumeInfo.authors[0],
+                    imageDBPath: `${imagePath}`,
+                    imagePosterPath:`${imagePath}`
+                })
+            }
+            
         });
         console.log(returnArray)
         return returnArray;

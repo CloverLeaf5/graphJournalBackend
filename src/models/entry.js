@@ -105,13 +105,19 @@ const entrySchema = mongoose.Schema({
             type: String 
         }
     }],
+    // Deprecated in favor of S3 below
     APIImageDBPath: {
         // URL which is prepended before Image Path
         type: String 
     },
+    // Deprecated in favor of S3 below
     APIImagePath: {
         // URL which is appended after DB Path
         type: String 
+    },
+    APIImageS3Key: {
+        // S3 Key at AWS s3://graph-journal
+        type: String
     },
     whichImage: {
         // 0 for none, 1 for S3, 2 for APIImage
