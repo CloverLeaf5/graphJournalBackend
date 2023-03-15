@@ -91,7 +91,8 @@ exports.getBooks = async (title) => {
         dataArray = dataArray.slice(0,NUM_ELEMENTS);
         let returnArray = [];
         dataArray.forEach(book => {
-            if (book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail){  // Would fail if there are no imageLinks
+            // Has complete entry
+            if (book.volumeInfo.title && book.volumeInfo.authors && book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail){  // Would fail if there are no imageLinks
                 returnArray.push({
                     //concatenate DB Path and Poster Path for the image
                     title: book.volumeInfo.title,
@@ -99,7 +100,7 @@ exports.getBooks = async (title) => {
                     imageDBPath: `${imagePath}`,
                     imagePosterPath:`${book.volumeInfo.imageLinks.thumbnail}`
                 })
-            } else { // No image links, send empty string
+            } else if (book.volumeInfo.title && book.volumeInfo.authors) { // No image links, send empty string
                 returnArray.push({
                     //concatenate DB Path and Poster Path for the image
                     title: book.volumeInfo.title,
@@ -107,7 +108,7 @@ exports.getBooks = async (title) => {
                     imageDBPath: `${imagePath}`,
                     imagePosterPath:`${imagePath}`
                 })
-            }
+            } // Skip the entry if there is no title and author
             
         });
         console.log(returnArray)

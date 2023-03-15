@@ -60,6 +60,8 @@ exports.updateAPIImage = async (req, res) => {
     if (APIData.length === 0) return;
     
     const index = req.body.arraySelection;
+    if (index < 0) return;
+
     const APIImageDBURL = APIData[index].imageDBPath;
     const APIImagePathURL = APIData[index].imagePosterPath;
     const keyRaw = APIData[index].title;
