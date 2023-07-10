@@ -17,6 +17,7 @@ exports.entryTypesWithText = [
     {value: "website", text: "Website"},
     {value: "restaurant", text: "Restaurant"},
     {value: "trip", text: "Trip"},
+    {value: "flight", text: "Flight"},
     {value: "hotel", text: "Hotel"},
     {value: "roadTripStop", text: "Road Trip Stop"},
     {value: "nightOut", text: "Night Out"},
@@ -35,6 +36,7 @@ exports.entryTypesWithText = [
     {value: "childhoodMilestones", text: "Childhood Milestones"},
     {value: "birthday", text: "Birthday"},
     {value: "holiday", text: "Holiday"},
+    {value: "familyGathering", text: "Family Gathering"},
     {value: "pet", text: "Pet"},
     {value: "job", text: "Job"},
     {value: "residence", text: "Residence"},
@@ -54,7 +56,7 @@ exports.entryTypesWithText = [
 
 exports.entryTypes = [
     "journalEntry", "thought", "otherNote", "movie", "show", 
-    "song", "album", "band", "book", "restaurant", "trip", 
+    "song", "album", "band", "book", "restaurant", "trip", "flight", 
     "relationship", "friendship", "childhoodMilestones", "pet", 
     "job", "residence", "car", "school", "eventWedding", "eventSports", 
     "eventConcert", "eventParty", "eventOther", "roadTripStop",
@@ -63,5 +65,5 @@ exports.entryTypes = [
     "videoGame", "boardGame", "otherGame", "podcast", "youtube",
     "resource", "website", "gymMembership", "otherMembership",
     "onATeam", "otherExercise", "run", "hobby", "habit", "birthday",
-    "holiday"
+    "holiday", "familyGathering"
 ];

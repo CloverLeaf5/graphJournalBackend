@@ -1,5 +1,6 @@
 const Entry = require("../models/entry");
 const View = require("../models/view");
+const Group = require("../models/group");
 
 // Used to find the entries relevant to a view creation search
 // FRONT END MUST STRIP THE TIME FROM THE DATES
@@ -11,9 +12,14 @@ exports.findEntries = async (req, res) => {
     const tagIDs = [];
     const personIDs = [];
     const groupIDs = [];
+    const groupPeopleIDs = [];
     for (const tag of tags) tagIDs.push(tag._id);
     for (const person of people) personIDs.push(person._id);
-    for (const group of groups) groupIDs.push(group._id);
+    for (const group of groups) { // Will also need an array of arrays of the people in each requested grouop
+        groupIDs.push(group._id);
+        const popGroup = await Group.findById(group).populate("people");
+        groupPeopleIDs.push(popGroup.people.map((person) => person._id.toString()));
+    }
 
     // Define a criteria object based on the type, start date, and end dates
     const criteria = {};
@@ -64,6 +70,21 @@ exports.findEntries = async (req, res) => {
         const entriesMinusDeletedTP = [];
         for (const entry of entriesMinusDeletedT){
             let entryPeopleIDs = entry.people.map((person) => person._id.toString())
+            // Also add people that are in groups
+            for (const group of entry.groups){
+                const popGroup = await group.populate("people");
+                if (popGroup.people){
+                    let popGroupIDs = popGroup.people.map((person) => person._id.toString())
+                    for (const person of popGroupIDs){
+                        // Add the group people to the ID list if they aren't there already
+                        if (!entryPeopleIDs.includes(person)){
+                            entryPeopleIDs.push(person);
+                        }
+                    }
+                }
+                
+            }
+            
             let hasAllPeople = true;
             for (const person of personIDs)
                 if (!entryPeopleIDs.includes(person))
@@ -77,10 +98,23 @@ exports.findEntries = async (req, res) => {
         const entriesMinusDeletedTPG = [];
         for (const entry of entriesMinusDeletedTP){
             let entryGroupIDs = entry.groups.map((group) => group._id.toString())
+            let entryPeopleIDs = entry.people.map((person) => person._id.toString())
             let hasAllGroups = true;
-            for (const group of groupIDs)
-                if (!entryGroupIDs.includes(group))
-                    hasAllGroups = false;
+            for (const [index, group] of groupIDs.entries()) // Loop through each of the requested groups
+                if (!entryGroupIDs.includes(group)){
+                    // Also check if all the people from the group are listed individually
+                    if (groupPeopleIDs[index].length > 0){
+                        for (const person of groupPeopleIDs[index]){
+                            // If any person from the group is not in the entry, then it can be falsified
+                            if (!entryPeopleIDs.includes(person)){
+                                hasAllGroups = false;
+                                break;
+                            }
+                        }
+                    } else { // If the group is empty then it needs to have the group itself tagged
+                        hasAllGroups = false;
+                    }
+                }
             if (hasAllGroups)
                 entriesMinusDeletedTPG.push(entry);
         }
