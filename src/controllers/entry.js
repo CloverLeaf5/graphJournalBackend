@@ -67,7 +67,8 @@ exports.updateAPIImage = async (req, res) => {
     const keyRaw = APIData[index].title;
     const keyClean = keyRaw.replace(/[^A-Za-z0-9]/g, ""); // Use regex to remove non-alphanumeric characters
     let APIImageCounter;
-    // Get the current API Image Counter from the DB
+    // Get the current API Image Counter from the DB which counts all images coming in
+    // This is appended to the image name and assures unique entries
     try{
         APIImageCounter = await Counter.findOne({ title: 'APIImageCounter', user: req.user._id });
         if (!APIImageCounter) { // This is the first time and must create the entry
