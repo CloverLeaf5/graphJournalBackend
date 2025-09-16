@@ -18,7 +18,8 @@ exports.entryTypesWithText = [
     {value: "restaurant", text: "Restaurant"},
     {value: "trip", text: "Trip"},
     {value: "flight", text: "Flight"},
-    {value: "hotel", text: "Hotel"},
+    {value: "boatTrip", text: "Boat Trip"},
+    {value: "hotel", text: "Hotel or Lodging"},
     {value: "roadTripStop", text: "Road Trip Stop"},
     {value: "nightOut", text: "Night Out"},
     {value: "dayTrip", text: "Day Trip"},
@@ -37,6 +38,8 @@ exports.entryTypesWithText = [
     {value: "birthday", text: "Birthday"},
     {value: "holiday", text: "Holiday"},
     {value: "familyGathering", text: "Family Gathering"},
+    {value: "dinnerParty", text: "Dinner Party"},
+    {value: "hangoutPlayDate", text: "Hangout / Play Date"},
     {value: "pet", text: "Pet"},
     {value: "job", text: "Job"},
     {value: "residence", text: "Residence"},
@@ -57,7 +60,7 @@ exports.entryTypesWithText = [
 
 exports.entryTypes = [
     "journalEntry", "thought", "otherNote", "movie", "show", 
-    "song", "album", "band", "book", "restaurant", "trip", "flight", 
+    "song", "album", "band", "book", "restaurant", "trip", "flight", "boatTrip",
     "relationship", "friendship", "childhoodMilestones", "pet", 
     "job", "residence", "car", "school", "eventWedding", "eventSports", "eventConference",
     "eventConcert", "eventParty", "eventOther", "roadTripStop",
@@ -66,5 +69,5 @@ exports.entryTypes = [
     "videoGame", "boardGame", "otherGame", "podcast", "youtube",
     "resource", "website", "gymMembership", "otherMembership",
     "onATeam", "otherExercise", "run", "hobby", "habit", "birthday",
-    "holiday", "familyGathering"
+    "holiday", "familyGathering", "dinnerParty", "hangoutPlayDate"
 ];
